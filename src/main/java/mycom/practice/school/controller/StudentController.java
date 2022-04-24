@@ -1,8 +1,10 @@
 package mycom.practice.school.controller;
 
+import mycom.practice.school.constant.AppConstants;
 import mycom.practice.school.entity.Student;
-import mycom.practice.school.exception.StudentNotFoundException;
+import mycom.practice.school.entity.StudentResponse;
 import mycom.practice.school.repository.StudentDAO;
+import mycom.practice.school.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,8 @@ public class StudentController {
     @Autowired
     private StudentDAO studentDao;
 
-    @GetMapping(path="/", produces = "application/json")
-    public List<Student> getStudents()
-    {
-        return studentDao.findAll();
-    }
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping("/student/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable("id") int id) {
@@ -47,5 +46,20 @@ public class StudentController {
                 .buildAndExpand(student.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+    @GetMapping(path="/", produces = "application/json")
+    public List<Student> getStudents()
+    {
+        return studentDao.findAll();
+    }
+
+    @GetMapping(path = "/getallstudents/")
+    public StudentResponse getAllStudents(
+            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+    ){
+        return studentService.getAllStudents(pageNo, pageSize, sortBy, sortDir);
     }
 }
