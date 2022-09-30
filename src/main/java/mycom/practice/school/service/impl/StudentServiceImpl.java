@@ -11,8 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +27,7 @@ public class StudentServiceImpl implements StudentService {
     private StudentDAO studentDao;
 
     @Override
-    public StudentResponse getAllStudents(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public StudentResponse findAllStudents(int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo,pageSize,sort);
@@ -38,10 +42,22 @@ public class StudentServiceImpl implements StudentService {
         studentResponse.setLast(students.isLast());
         return studentResponse;
     }
-
     @Override
-    public Optional<Student> getStudentById(int id) {
-         return studentDao.findById(id);
+    public List<StudentDto> getAllStudents() {
+        List<StudentDto> allStudentDtos = new ArrayList<>();
+        List<Student> studentList = studentDao.findAll();
+        studentList.stream().forEach(student -> allStudentDtos.add(mapToDto(student)));
+        return allStudentDtos;
+    }
+    @Override
+    public StudentDto getStudentById(int id) {
+        Optional<Student> student = studentDao.findById(id);
+        if(!student.isPresent()){
+            throw new StudentNotFoundException(id);
+            // throws new exception,
+            // you will get a warning message in the log along with HTTP_STATUS code of NOT_FOUND: 404
+        }
+         return mapToDto(student.get());
     }
 
     @Override

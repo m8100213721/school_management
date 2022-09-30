@@ -6,22 +6,30 @@ import mycom.practice.school.entity.StudentResponse;
 import mycom.practice.school.payload.StudentDto;
 import mycom.practice.school.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
+//@CrossOrigin(origins = "http://localhost:4200")
 @RestController("/")
 public class StudentController {
 
     @Autowired
     private StudentService studentService;
 
-    @GetMapping("/getstudent/{id}")
-    public Optional<Student> getStudentById(@PathVariable("id") int id) {
-        Optional<Student> student = studentService.getStudentById(id);
-        return student;
+    @GetMapping("/testui")
+    public String testConnection(){
+        return "test ui connection successful";
+    }
+
+    @GetMapping(path = "/getstudent/{id}")
+    public StudentDto getStudentById(@PathVariable("id") int id) {
+        return studentService.getStudentById(id);
         /*
         if(!student.isPresent()){
             return new ResponseEntity<Student> (HttpStatus.NOT_FOUND);
@@ -70,13 +78,17 @@ public class StudentController {
         studentService.addTenFakeStudents();
     }
 
-    @GetMapping(path = "/findallstudents/")
-    public StudentResponse getAllStudents(
+    @GetMapping(path = "/findallstudents")
+    public StudentResponse findAllStudents(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ){
-        return studentService.getAllStudents(pageNo, pageSize, sortBy, sortDir);
+        return studentService.findAllStudents(pageNo, pageSize, sortBy, sortDir);
+    }
+    @GetMapping(path = "/getallstudents", produces = "application/json")
+    public List<StudentDto> getAllStudents(){
+        return studentService.getAllStudents();
     }
 }
