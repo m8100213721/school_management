@@ -6,10 +6,12 @@
    without need to set up any relational db explicitly.
    http://localhost:8080/h2-console
    
-3. As of now, Only CRUD operations on students has been developed.
+3. As of now, Only CRUD operations on students has been developed. --> DONE
 
-4. Next action TODO: School administration/employee & Role based operations 
+4. Authentication setup in progress
+
+5. Next action TODO: School administration/employee & Role based operations 
    
-5. Next action TODO: Docker file  
+6. Next action TODO: Docker file  
 
-6. Next action TODO: Pagination feature in Student model
+7. Next action TODO: Pagination feature in Student model
