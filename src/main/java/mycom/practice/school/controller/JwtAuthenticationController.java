@@ -3,6 +3,8 @@ package mycom.practice.school.controller;
 import mycom.practice.school.config.JwtTokenUtil;
 import mycom.practice.school.entity.JwtRequest;
 import mycom.practice.school.entity.JwtResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,10 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
-@RestController("users")
-@CrossOrigin
+@RestController
 public class JwtAuthenticationController {
-
+	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationController.class);
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -29,10 +30,10 @@ public class JwtAuthenticationController {
 	@Autowired
 	private UserDetailsService jwtInMemoryUserDetailsService;
 
-	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+	@RequestMapping(value = "/users/authenticate", method = RequestMethod.POST)
 	public ResponseEntity<?> generateAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
 			throws Exception {
-
+		logger.info("Authenticating users");
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
 		final UserDetails userDetails = jwtInMemoryUserDetailsService
